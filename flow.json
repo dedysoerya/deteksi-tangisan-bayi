@@ -711,19 +711,9 @@
         "height": 5,
         "columns": [
             {
-                "field": "tes",
-                "title": "tes",
-                "width": "",
-                "align": "left",
-                "formatter": "plaintext",
-                "formatterParams": {
-                    "target": "_blank"
-                }
-            },
-            {
-                "field": "tes2",
-                "title": "tes2",
-                "width": "",
+                "field": "No",
+                "title": "No",
+                "width": "15%",
                 "align": "left",
                 "formatter": "rownum",
                 "formatterParams": {
@@ -731,21 +721,31 @@
                 }
             },
             {
-                "field": "tes3",
-                "title": "tes3",
-                "width": "",
-                "align": "left",
-                "formatter": "progress",
+                "field": "Waktu",
+                "title": "Waktu",
+                "width": "30%",
+                "align": "center",
+                "formatter": "plaintext",
                 "formatterParams": {
                     "target": "_blank"
                 }
             },
             {
-                "field": "tes4",
-                "title": "tes4",
-                "width": "",
-                "align": "left",
-                "formatter": "color",
+                "field": "Klasifikasi",
+                "title": "Klasifikasi",
+                "width": "30%",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "Durasi",
+                "title": "Durasi",
+                "width": "25%",
+                "align": "center",
+                "formatter": "traffic",
                 "formatterParams": {
                     "target": "_blank"
                 }
