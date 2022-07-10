@@ -294,6 +294,15 @@
         "order": 23
     },
     {
+        "id": "d818b5de8cde5daa",
+        "type": "ui_group",
+        "name": "Group 4",
+        "tab": "d32b9a479688af78",
+        "order": 4,
+        "disp": true,
+        "width": 6
+    },
+    {
         "id": "a63ed76d8fb25e0f",
         "type": "inject",
         "z": "3988ba92a36baeae",
@@ -439,29 +448,6 @@
         ]
     },
     {
-        "id": "454604a7e765f457",
-        "type": "ui_media",
-        "z": "3988ba92a36baeae",
-        "group": "a73c0688.26bac8",
-        "name": "",
-        "width": 7,
-        "height": 6,
-        "order": 1,
-        "category": "image",
-        "file": "sleep.jpg",
-        "layout": "expand",
-        "showcontrols": true,
-        "loop": true,
-        "onstart": false,
-        "scope": "local",
-        "tooltip": "",
-        "x": 310,
-        "y": 500,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "7af9cbdb18c06472",
         "type": "ui_text",
         "z": "3988ba92a36baeae",
@@ -587,7 +573,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 800,
+        "x": 860,
         "y": 340,
         "wires": [
             []
@@ -711,19 +697,19 @@
         "height": 5,
         "columns": [
             {
-                "field": "No",
+                "field": "no",
                 "title": "No",
                 "width": "15%",
-                "align": "left",
+                "align": "center",
                 "formatter": "rownum",
                 "formatterParams": {
                     "target": "_blank"
                 }
             },
             {
-                "field": "Waktu",
+                "field": "waktu",
                 "title": "Waktu",
-                "width": "30%",
+                "width": "37%",
                 "align": "center",
                 "formatter": "plaintext",
                 "formatterParams": {
@@ -731,9 +717,9 @@
                 }
             },
             {
-                "field": "Klasifikasi",
+                "field": "class",
                 "title": "Klasifikasi",
-                "width": "30%",
+                "width": "31%",
                 "align": "center",
                 "formatter": "plaintext",
                 "formatterParams": {
@@ -741,11 +727,11 @@
                 }
             },
             {
-                "field": "Durasi",
+                "field": "durasi",
                 "title": "Durasi",
-                "width": "25%",
+                "width": "22%",
                 "align": "center",
-                "formatter": "traffic",
+                "formatter": "plaintext",
                 "formatterParams": {
                     "target": "_blank"
                 }
@@ -753,7 +739,7 @@
         ],
         "outputs": 0,
         "cts": false,
-        "x": 570,
+        "x": 790,
         "y": 680,
         "wires": []
     },
@@ -813,8 +799,7 @@
             [
                 "8ddf73e99e41581e",
                 "8743237ccaa2a69a",
-                "b99c19105d00146d",
-                "0de7035c0dbdeef3"
+                "b99c19105d00146d"
             ]
         ]
     },
@@ -1224,6 +1209,131 @@
         "x": 870,
         "y": 220,
         "wires": []
+    },
+    {
+        "id": "454604a7e765f457",
+        "type": "ui_media",
+        "z": "3988ba92a36baeae",
+        "group": "5bef790a4677f4f7",
+        "name": "",
+        "width": 7,
+        "height": 6,
+        "order": 1,
+        "category": "image",
+        "file": "sleep.jpg",
+        "layout": "expand",
+        "showcontrols": true,
+        "loop": true,
+        "onstart": false,
+        "scope": "local",
+        "tooltip": "",
+        "x": 310,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "69dcfe25121c761d",
+        "type": "inject",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 400,
+        "y": 680,
+        "wires": [
+            [
+                "643cb60961cd1227"
+            ]
+        ]
+    },
+    {
+        "id": "643cb60961cd1227",
+        "type": "function",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     \"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.payload).toLocaleString(),\n     \"class\"    : \"Tangis Bayi\",\n     \"durasi\"   : \"20\"\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 560,
+        "y": 680,
+        "wires": [
+            [
+                "0de7035c0dbdeef3"
+            ]
+        ]
+    },
+    {
+        "id": "5647aa040531e6ed",
+        "type": "inject",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 360,
+        "y": 1000,
+        "wires": [
+            [
+                "fe0be2a679e9f45d"
+            ]
+        ]
+    },
+    {
+        "id": "fe0be2a679e9f45d",
+        "type": "change",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "savedData",
+                "pt": "flow",
+                "to": "[ ]",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 570,
+        "y": 1000,
+        "wires": [
+            []
+        ]
     },
     {
         "id": "1bf1c4dc04d001f1",
@@ -1858,27 +1968,6 @@
         ]
     },
     {
-        "id": "696f92ca.600a9c",
-        "type": "ui_template",
-        "z": "394c30a25f620557",
-        "group": "a73c0688.26bac8",
-        "name": "",
-        "order": 1,
-        "width": "7",
-        "height": "6",
-        "format": "\n \n <img width=\"100%\" height=\"100%\" alt=\"Image not found\" src=\"data:image/png;base64,{{msg.payload}}\" />\n",
-        "storeOutMessages": true,
-        "fwdInMessages": true,
-        "resendOnRefresh": false,
-        "templateScope": "local",
-        "className": "",
-        "x": 720,
-        "y": 100,
-        "wires": [
-            []
-        ]
-    },
-    {
         "id": "e66563f4.00136",
         "type": "base64",
         "z": "394c30a25f620557",
@@ -1929,8 +2018,7 @@
         "y": 340,
         "wires": [
             [
-                "d603e881.2fa1c8",
-                "f4651ab15262fe53"
+                "d603e881.2fa1c8"
             ]
         ]
     },
@@ -1958,28 +2046,7 @@
         "x": 110,
         "y": 340,
         "wires": [
-            [
-                "878f8ec1.effe4"
-            ]
-        ]
-    },
-    {
-        "id": "878f8ec1.effe4",
-        "type": "function",
-        "z": "394c30a25f620557",
-        "name": "image counter",
-        "func": "var count = flow.get(\"count\")||0;\n\ncount++;\n\nnode.status({fill:\"blue\",shape:\"ring\",text:\"Image \" + count});\n\n// Save the new value back to context so it will be available next time\nflow.set('count',count);\n\n// Update the message payload and return - no need to create a new msg\nmsg.payload = \"Image \" + count;\nreturn msg;",
-        "outputs": 1,
-        "noerr": 0,
-        "initialize": "",
-        "finalize": "",
-        "libs": [],
-        "x": 320,
-        "y": 340,
-        "wires": [
-            [
-                "46ffc819.b736f8"
-            ]
+            []
         ]
     },
     {
@@ -2013,29 +2080,6 @@
         "x": 700,
         "y": 280,
         "wires": []
-    },
-    {
-        "id": "f4651ab15262fe53",
-        "type": "ui_media",
-        "z": "394c30a25f620557",
-        "group": "a73c0688.26bac8",
-        "name": "",
-        "width": 0,
-        "height": 0,
-        "order": 4,
-        "category": "",
-        "file": "",
-        "layout": "adjust",
-        "showcontrols": true,
-        "loop": true,
-        "onstart": false,
-        "scope": "local",
-        "tooltip": "",
-        "x": 870,
-        "y": 380,
-        "wires": [
-            []
-        ]
     },
     {
         "id": "8a069626.50a548",
@@ -2099,7 +2143,7 @@
         "id": "1ede2ded.d1696a",
         "type": "ui_text",
         "z": "394c30a25f620557",
-        "group": "a73c0688.26bac8",
+        "group": "5bef790a4677f4f7",
         "order": 4,
         "width": 0,
         "height": 0,
@@ -2143,7 +2187,7 @@
         "id": "b1894b2a.ba7c3",
         "type": "ui_text",
         "z": "394c30a25f620557",
-        "group": "a73c0688.26bac8",
+        "group": "5bef790a4677f4f7",
         "order": 0,
         "width": "0",
         "height": "0",
@@ -2366,7 +2410,7 @@
         "name": "",
         "label": "switch",
         "tooltip": "",
-        "group": "a73c0688.26bac8",
+        "group": "5bef790a4677f4f7",
         "order": 0,
         "width": 0,
         "height": 0,
@@ -2707,6 +2751,27 @@
             [
                 "e66563f4.00136"
             ]
+        ]
+    },
+    {
+        "id": "696f92ca.600a9c",
+        "type": "ui_template",
+        "z": "394c30a25f620557",
+        "group": "5bef790a4677f4f7",
+        "name": "",
+        "order": 1,
+        "width": "7",
+        "height": "6",
+        "format": "\n \n <img width=\"100%\" height=\"100%\" alt=\"Image not found\" src=\"data:image/png;base64,{{msg.payload}}\" />\n",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": false,
+        "templateScope": "local",
+        "className": "",
+        "x": 720,
+        "y": 100,
+        "wires": [
+            []
         ]
     }
 ]
