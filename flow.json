@@ -407,7 +407,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "1",
+        "repeat": "3",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -799,7 +799,8 @@
             [
                 "8ddf73e99e41581e",
                 "8743237ccaa2a69a",
-                "b99c19105d00146d"
+                "b99c19105d00146d",
+                "a798c15f7a12763f"
             ]
         ]
     },
@@ -817,7 +818,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "1",
+        "repeat": "3",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -1189,8 +1190,7 @@
         "y": 280,
         "wires": [
             [
-                "8743237ccaa2a69a",
-                "ca8093eecf7964df"
+                "8743237ccaa2a69a"
             ]
         ]
     },
@@ -1203,10 +1203,11 @@
         "tosidebar": true,
         "console": false,
         "tostatus": false,
-        "complete": "false",
+        "complete": "true",
+        "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 870,
+        "x": 890,
         "y": 220,
         "wires": []
     },
@@ -1267,17 +1268,18 @@
         "type": "function",
         "z": "3988ba92a36baeae",
         "name": "",
-        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     \"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.payload).toLocaleString(),\n     \"class\"    : \"Tangis Bayi\",\n     \"durasi\"   : \"20\"\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
+        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     \"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.timestamp).toLocaleString(),\n     \"class\"    : msg.class,\n     \"durasi\"   : msg.payload\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 560,
+        "x": 580,
         "y": 680,
         "wires": [
             [
-                "0de7035c0dbdeef3"
+                "0de7035c0dbdeef3",
+                "ca8093eecf7964df"
             ]
         ]
     },
@@ -1333,6 +1335,167 @@
         "y": 1000,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "8ca96303.426af",
+        "type": "inject",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "prop",
+        "payload": "12:30",
+        "payloadType": "str",
+        "x": 140,
+        "y": 1040,
+        "wires": [
+            [
+                "9f0fd482.d4b6e8"
+            ]
+        ]
+    },
+    {
+        "id": "c0f0a451.674b98",
+        "type": "inject",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "value",
+        "payload": "19",
+        "payloadType": "num",
+        "x": 140,
+        "y": 1080,
+        "wires": [
+            [
+                "9f0fd482.d4b6e8"
+            ]
+        ]
+    },
+    {
+        "id": "9f0fd482.d4b6e8",
+        "type": "join",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": true,
+        "timeout": "",
+        "count": "2",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 300,
+        "y": 1060,
+        "wires": [
+            [
+                "76ad9419.0b24ec"
+            ]
+        ]
+    },
+    {
+        "id": "76ad9419.0b24ec",
+        "type": "function",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "func": "var newPayload = {};\nnewPayload[msg.payload.prop] = msg.payload.value;\nmsg.payload = newPayload;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 470,
+        "y": 1060,
+        "wires": [
+            [
+                "697ff6b5.1bd9e8"
+            ]
+        ]
+    },
+    {
+        "id": "697ff6b5.1bd9e8",
+        "type": "debug",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 630,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "a798c15f7a12763f",
+        "type": "change",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "class",
+                "pt": "msg",
+                "to": "payload > \"50\" ? \"Tangisan Bayi\" : \"Bukan Suara Bayi\" ",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "timestamp",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 760,
+        "y": 420,
+        "wires": [
+            [
+                "643cb60961cd1227"
+            ]
         ]
     },
     {
