@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 
 // Update these with values suitable for your network.
 
@@ -8,8 +9,8 @@
 // const char *password = "pancongnyamantap";
 const char *ssid = "such a person";
 const char *password = "zidanedane";
-//const char *ssid = "Mavens 2G";
-//const char *password = "adminmavens";
+// const char *ssid = "Mavens 2G";
+// const char *password = "adminmavens";
 const char *mqtt_server = "118.98.64.212";
 const char *userBroker = "admin";
 const char *passBroker = "adminmavens";
@@ -33,8 +34,8 @@ unsigned long rangegelombang, rangeHigh;
 
 boolean sinyalLow;
 boolean sinyalHigh;
-boolean gel=0;
-boolean prev_gel=0;
+boolean gel = 0;
+boolean prev_gel = 0;
 int prev_val = 553;
 int range = 0;
 int analisis = 0;
@@ -42,7 +43,7 @@ int analising = 0;
 int hitungGelombang = 0;
 int selisihrentang = 0;
 unsigned long panjangGelombang = 0;
-long g1,g2,g3,g4,g5,g6,g7,g8,g9,g10,g11,g12,g13,g14,g15,g16,g17,g18,g19,g20;
+long g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20;
 
 const long lamaAnalisis = 10000;
 const long periodeNormal = 500;
@@ -70,6 +71,7 @@ int value = 0;
 int ledLevel = 0;
 int prev_sensor_reading = 553;
 
+//============================================================
 // fungsi modul untuk koneksi wifi
 void setup_wifi()
 {
@@ -95,6 +97,71 @@ void setup_wifi()
   Serial.println("IP address: ");
   Serial.println(WiFi.localIP());
 }
+//============================================================
+
+//============================================================
+// fungsi connect MQTT ke Server Broker
+void reconnect()
+{
+  // Loop sampai reconnected
+  while (!client.connected())
+  {
+    Serial.print("Attempting MQTT connection...");
+    // membuat client ID random
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+    if (client.connect(clientId.c_str(), userBroker, passBroker))
+    {
+      Serial.println("connected");
+      // Jika connected, publish topic sekali...
+      client.publish("sensor/suara", "Pembacaan Sensor Suara");
+      // ... dan resubscribe
+      client.subscribe("sensor/suara");
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Delay 5 detik sampai tersambung lagi
+      delay(5000);
+    }
+  }
+}
+
+//============================================================<
+// fungsi kirim data format json
+void sendJsonData(char *jenisSuara, int durasi)
+{
+  StaticJsonBuffer<300> JSONbuffer;
+  JsonObject &JSONencoder = JSONbuffer.createObject();
+
+  JSONencoder["jenisSuara"] = jenisSuara;
+  JSONencoder["durasi"] = durasi;
+
+  char JSONmessageBuffer[100];
+  JSONencoder.printTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
+  Serial.println("Kirim data analisa to MQTT Broker");
+  Serial.println(JSONmessageBuffer);
+
+  if (client.publish("analisa/suara", JSONmessageBuffer) == true)
+  {
+    Serial.println("Success sending message");
+  }
+  else
+  {
+    Serial.println("Error sending message");
+  }
+
+  client.loop();
+  Serial.println("-------------");
+}
+
+//============================================================>
+
+//============================================================<
+// Fungsi subscriber membaca payload dari broker
 /*
 void callback(char *topic, byte *payload, unsigned int length)
 {
@@ -121,36 +188,7 @@ void callback(char *topic, byte *payload, unsigned int length)
     digitalWrite(led, LOW);
   }
 }*/
-
-// fungsi connect MQTT ke Server Broker
-void reconnect()
-{
-  // Loop sampai reconnected
-  while (!client.connected())
-  {
-    Serial.print("Attempting MQTT connection...");
-    // membuat client ID random
-    String clientId = "ESP8266Client-";
-    clientId += String(random(0xffff), HEX);
-    // Attempt to connect
-    if (client.connect(clientId.c_str(),userBroker,passBroker))
-    {
-      Serial.println("connected");
-      // Jika connected, publish topic sekali...
-      client.publish("sensor/suara", "Pembacaan Sensor Suara");
-      // ... dan resubscribe
-      client.subscribe("sensor/suara");
-    }
-    else
-    {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Delay 5 detik sampai tersambung lagi
-      delay(5000);
-    }
-  }
-}
+//============================================================>
 
 void setup()
 {
@@ -161,12 +199,22 @@ void setup()
   Serial.begin(9600);
   setup_wifi();
   client.setServer(mqtt_server, 1883);
-  //client.setCallback(callback);
+  // client.setCallback(callback);
   digitalWrite(LED_BUILTIN, HIGH);
 }
 
 void loop()
-{ /*
+{
+  char *suara = "Suara Tangis Bayi";
+  int duration = 29;
+
+  sendJsonData(suara, duration);
+  delay(3000);
+
+  //============================================================
+  // kodingan lama 1
+
+  /*
   //int sensor_reading = analogRead(sound_analog);
   //ledLevel = map(sensor_reading, 540, 700, 0, ledCount);
   //Serial.println(ledLevel);
@@ -183,10 +231,12 @@ void loop()
     //  digitalWrite(ledPin[i], LOW);
     //}
   }*/
-  
+  //============================================================
+
+  //============================================================
+  // codingan lama 2
   /*
-  //====================
-  
+
   int sensor_reading = analogRead(sound_analog);
   int rangeSensor = sensor_reading - prev_sensor_reading;
   rangeSensor = abs(rangeSensor);
@@ -260,25 +310,28 @@ void loop()
     }
   }
   */
-  //==============================================
-  //Reconnect MQTT
+  //============================================================>
+
+  //==============================================<
+  // Reconnect MQTT
   if (!client.connected())
   {
     reconnect();
   }
   client.loop();
-  //==============================================
+  //==============================================>
 
-  //tes publish
-  snprintf(msg, MSG_BUFFER_SIZE, "%ld", 100);
+  //==========================================================<
+  // tes publish
+  /*
+  snprintf(msg, MSG_BUFFER_SIZE, "%d", 100);
   client.publish("sensor/suara", msg);
   Serial.println(msg);
-  delay(1000);
+  delay(1000);*/
+  //============================================================>
 
-
-  //  int val_digital = digitalRead(sound_digital);
-  //  int val_analog = analogRead(sound_analog);
-
+  //============================================================<
+  // codingan lama 1
   /*unsigned long now = millis();
   if (now - lastMsg > 2000)
   {
@@ -293,4 +346,5 @@ void loop()
   //  Serial.print("\t");
   //  Serial.println(val_digital);
   }*/
+  //============================================================>
 }
