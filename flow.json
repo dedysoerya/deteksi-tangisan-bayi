@@ -1507,8 +1507,8 @@
         "property": "payload",
         "action": "",
         "pretty": false,
-        "x": 610,
-        "y": 120,
+        "x": 570,
+        "y": 160,
         "wires": [
             [
                 "ca8093eecf7964df"
