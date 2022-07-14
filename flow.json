@@ -1507,7 +1507,7 @@
         "property": "payload",
         "action": "",
         "pretty": false,
-        "x": 570,
+        "x": 550,
         "y": 160,
         "wires": [
             [
