@@ -397,7 +397,6 @@
         "id": "fe3c01da20ce078a",
         "type": "inject",
         "z": "3988ba92a36baeae",
-        "d": true,
         "name": "",
         "props": [
             {
@@ -811,7 +810,6 @@
         "id": "2be24bb49e93e165",
         "type": "inject",
         "z": "3988ba92a36baeae",
-        "d": true,
         "name": "",
         "props": [
             {
@@ -1521,7 +1519,7 @@
         "id": "8004ca7ae42c4519",
         "type": "change",
         "z": "3988ba92a36baeae",
-        "name": "",
+        "name": "parsingJson",
         "rules": [
             {
                 "t": "set",
@@ -1550,7 +1548,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 520,
+        "x": 510,
         "y": 640,
         "wires": [
             [
