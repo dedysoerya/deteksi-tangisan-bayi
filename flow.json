@@ -323,8 +323,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 180,
-        "y": 120,
+        "x": 160,
+        "y": 180,
         "wires": [
             [
                 "e3d2ad15e2b636d0"
@@ -387,8 +387,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 180,
-        "y": 180,
+        "x": 160,
+        "y": 220,
         "wires": [
             []
         ]
@@ -397,6 +397,7 @@
         "id": "fe3c01da20ce078a",
         "type": "inject",
         "z": "3988ba92a36baeae",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -407,7 +408,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "3",
+        "repeat": "5",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -435,7 +436,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 320,
+        "x": 240,
         "y": 260,
         "wires": [
             [
@@ -443,7 +444,8 @@
                 "4b2c7189b53b3e7a",
                 "624a7d59ec676422",
                 "b99c19105d00146d",
-                "504b769f6a5b1b16"
+                "504b769f6a5b1b16",
+                "c49267aaa2063870"
             ]
         ]
     },
@@ -678,11 +680,11 @@
         "width": 5,
         "height": 1,
         "name": "",
-        "label": "Developed by Aminatus Z.A (18.52.0019)",
+        "label": "Developed by Aminatus (18.52.0019)",
         "format": "{{msg.payload}}",
         "layout": "row-left",
         "className": "",
-        "x": 820,
+        "x": 790,
         "y": 580,
         "wires": []
     },
@@ -793,14 +795,15 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 330,
+        "x": 250,
         "y": 300,
         "wires": [
             [
                 "8ddf73e99e41581e",
                 "8743237ccaa2a69a",
                 "b99c19105d00146d",
-                "a798c15f7a12763f"
+                "a798c15f7a12763f",
+                "c49267aaa2063870"
             ]
         ]
     },
@@ -808,6 +811,7 @@
         "id": "2be24bb49e93e165",
         "type": "inject",
         "z": "3988ba92a36baeae",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -818,7 +822,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "3",
+        "repeat": "5",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -826,7 +830,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 210,
-        "y": 360,
+        "y": 380,
         "wires": [
             [
                 "4d984d850ea2c142"
@@ -981,7 +985,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "3.5",
+        "repeat": "15",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -1006,7 +1010,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "1",
+        "repeat": "10",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -1035,7 +1039,7 @@
                 "vt": "str"
             }
         ],
-        "repeat": "5.5",
+        "repeat": "7",
         "crontab": "",
         "once": false,
         "onceDelay": 0.1,
@@ -1207,8 +1211,8 @@
         "targetType": "full",
         "statusVal": "",
         "statusType": "auto",
-        "x": 890,
-        "y": 220,
+        "x": 750,
+        "y": 160,
         "wires": []
     },
     {
@@ -1268,7 +1272,7 @@
         "type": "function",
         "z": "3988ba92a36baeae",
         "name": "",
-        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     \"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.timestamp).toLocaleString(),\n     \"class\"    : msg.class,\n     \"durasi\"   : msg.payload\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
+        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     \"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.timestamp).toLocaleString(),\n     \"class\"    : msg.class,\n     \"durasi\"   : msg.durasi\n     //\"class\"    : msg.payload.jenisSuara,\n     //\"durasi\"   : msg.payload.durasi\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
@@ -1278,8 +1282,7 @@
         "y": 680,
         "wires": [
             [
-                "0de7035c0dbdeef3",
-                "ca8093eecf7964df"
+                "0de7035c0dbdeef3"
             ]
         ]
     },
@@ -1495,6 +1498,101 @@
         "wires": [
             [
                 "643cb60961cd1227"
+            ]
+        ]
+    },
+    {
+        "id": "c49267aaa2063870",
+        "type": "json",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 610,
+        "y": 120,
+        "wires": [
+            [
+                "ca8093eecf7964df"
+            ]
+        ]
+    },
+    {
+        "id": "8004ca7ae42c4519",
+        "type": "change",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "durasi",
+                "pt": "msg",
+                "to": "payload.durasi",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "class",
+                "pt": "msg",
+                "to": "payload.jenisSuara",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "timestamp",
+                "pt": "msg",
+                "to": "",
+                "tot": "date"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 520,
+        "y": 640,
+        "wires": [
+            [
+                "643cb60961cd1227"
+            ]
+        ]
+    },
+    {
+        "id": "3995575431bae4d7",
+        "type": "mqtt in",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "topic": "analisa/suara",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "6965d65c2ee6deef",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 330,
+        "y": 580,
+        "wires": [
+            [
+                "00fa8510a06ba6af"
+            ]
+        ]
+    },
+    {
+        "id": "00fa8510a06ba6af",
+        "type": "json",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 470,
+        "y": 580,
+        "wires": [
+            [
+                "ca8093eecf7964df",
+                "8004ca7ae42c4519"
             ]
         ]
     },
