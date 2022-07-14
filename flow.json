@@ -358,8 +358,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 360,
-        "y": 200,
+        "x": 340,
+        "y": 180,
         "wires": [
             [
                 "8ddf73e99e41581e"
