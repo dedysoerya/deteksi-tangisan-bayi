@@ -337,6 +337,7 @@ void loop()
   {
     lastMsg = now;
     ++value;
+    //https://www.geeksforgeeks.org/snprintf-c-library/
     snprintf(msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
     Serial.print("Publish message: ");
     Serial.println(msg);
