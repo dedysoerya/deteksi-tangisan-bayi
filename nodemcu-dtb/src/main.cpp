@@ -1,9 +1,520 @@
 #include <Arduino.h>
+#include <ESP8266WiFi.h>
+#include <PubSubClient.h>
+#include <ArduinoJson.h>
 
-void setup() {
-  // put your setup code here, to run once:
+// Update these with values suitable for your network.
+
+// const char *ssid = "KS 24 BLIMBING OUTDOOR";
+// const char *password = "pancongnyamantap";
+//const char *ssid = "such a person";
+//const char *password = "zidanedane";
+const char *ssid = "Mavens 2G";
+const char *password = "adminmavens";
+const char *mqtt_server = "118.98.64.212";
+const char *userBroker = "admin";
+const char *passBroker = "adminmavens";
+
+const int led = 13;
+const int sound_digital = 4;
+const int sound_analog = A0;
+const int treshold = 566;
+// const int num_measure = 128;
+int sound_dig = 500;
+const int ledCount = 20;
+
+unsigned long timeAnalisis = 0;
+unsigned long time_low = 0;
+unsigned long time_high = 0;
+unsigned long waktuselisih = 0;
+unsigned long timeNow = 0;
+unsigned long startTime, startLow, rangeLow, startHigh, changeLow;
+unsigned long currentTime;
+unsigned long playing_time;
+unsigned long playingdelay;
+unsigned long rangegelombang, rangeHigh;
+
+boolean sinyalLow;
+boolean sinyalHigh; //kondisi mendeteksi suara
+boolean gel = 0;
+boolean prev_gel = 0;
+boolean hening = 1; //kondisi tidak ada suara
+
+int range = 0;
+int analisis = 0;
+int analising = 0;
+int hitungGelombang = 0;
+int selisihrentang = 0;
+
+String suara;
+
+unsigned long panjangGelombang = 0;
+long g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20;
+
+const long lamaAnalisis = 10000;
+const long periodeNormal = 1000;
+const long periodePlaying = 500;
+
+const long waitTime = 10000.0;  // how long after trigger to wait before playing music
+const long cancelTime = 4000.0; // during wait, how long of a lull will cancel wait
+const long playTime = 3000.0;
+
+boolean waiting = 0;
+boolean playing = 0;
+long waitStart;    // when trigger initiated waiting
+long waitDuration; // how long we have been waiting
+long playStart;    // when play was initiated
+long playDuration; // how long we've been playing
+long cancelStart;  // when the last trigger was
+long cancelDuration;
+
+WiFiClient espClient;
+PubSubClient client(espClient);
+unsigned long lastMsg = 0;
+#define MSG_BUFFER_SIZE (50)
+char msg[MSG_BUFFER_SIZE];
+char status_msg[25];
+int value = 0;
+
+int ledLevel = 0;
+// int prev_sensor_reading = 553;
+
+//============================================================
+// fungsi modul untuk koneksi wifi
+void setup_wifi()
+{
+
+  delay(10);
+  Serial.println();
+  Serial.print("Connecting to ");
+  Serial.println(ssid);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+
+  while (WiFi.status() != WL_CONNECTED)
+  {
+    delay(100);
+    Serial.print(".");
+  }
+
+  randomSeed(micros());
+
+  Serial.println("");
+  Serial.println("WiFi connected");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+//============================================================
+
+//============================================================
+// fungsi connect MQTT ke Server Broker
+void connectMQTT()
+{
+  // Loop sampai reconnected
+  while (!client.connected())
+  {
+    Serial.print("Attempting MQTT connection...");
+    // membuat client ID random
+    String clientId = "ESP8266Client-";
+    clientId += String(random(0xffff), HEX);
+    // Attempt to connect
+    if (client.connect(clientId.c_str(), userBroker, passBroker))
+    {
+      Serial.println("connected");
+      // Jika connected, publish topic sekali...
+      //client.publish("sensor/suara", "Pembacaan Sensor Suara");
+      // ... dan resubscribe
+      //client.subscribe("sensor/suara");
+    }
+    else
+    {
+      Serial.print("failed, rc=");
+      Serial.print(client.state());
+      Serial.println(" try again in 5 seconds");
+      // Delay 5 detik sampai tersambung lagi
+      delay(5000);
+    }
+  }
 }
 
-void loop() {
-  // put your main code here, to run repeatedly:
+//============================================================<
+// fungsi kirim data format json
+void sendJsonData(String jenisSuara, int durasi)
+{
+  StaticJsonBuffer<300> JSONbuffer;
+  JsonObject &JSONencoder = JSONbuffer.createObject();
+
+  JSONencoder["jenisSuara"] = jenisSuara;
+  JSONencoder["durasi"] = durasi;
+
+  char JSONmessageBuffer[100];
+  JSONencoder.printTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
+  Serial.println("Kirim data analisa to MQTT Broker");
+  Serial.println(JSONmessageBuffer);
+
+  if (client.publish("analisa/suara", JSONmessageBuffer) == true)
+  {
+    Serial.println("Success sending message");
+  }
+  else
+  {
+    Serial.println("Error sending message");
+  }
+
+  client.loop();
+  Serial.println("-------------");
+}
+//============================================================>
+
+//============================================================<
+void debugMode(int val1, int val2, int val3, int val4, int val5)
+{
+  Serial.print(val1);
+  Serial.print("\t");
+  Serial.print(val2);
+  Serial.print("\t");
+  Serial.print(val3);
+  Serial.print("\t");
+  Serial.print(val4);
+  Serial.print("\t");
+  Serial.println(val5);
+}
+//============================================================>
+
+//============================================================<
+// Fungsi subscriber membaca payload dari broker
+/*
+void callback(char *topic, byte *payload, unsigned int length)
+{
+  Serial.print("Message arrived [");
+  Serial.print(topic);
+  Serial.print("] ");
+  for (int i = 0; i < length; i++)
+  {
+    Serial.print((char)payload[i]);
+  }
+  Serial.println();
+
+  // Switch on the LED if an 1 was received as first character
+  if ((char)payload[0] == '1')
+  {
+    digitalWrite(LED_BUILTIN, LOW); // Turn the LED on (Note that LOW is the voltage level
+    digitalWrite(led, HIGH);
+    // but actually the LED is on; this is because
+    // it is active low on the ESP-01)
+  }
+  if ((char)payload[0] == '0')
+  {
+    digitalWrite(LED_BUILTIN, HIGH); // Turn the LED off by making the voltage HIGH
+    digitalWrite(led, LOW);
+  }
+}*/
+//============================================================>
+
+void setup()
+{
+  pinMode(LED_BUILTIN, OUTPUT); // Initialize the BUILTIN_LED pin as an output
+  pinMode(led, OUTPUT);
+  pinMode(sound_digital, INPUT);
+
+  Serial.begin(9600);
+  setup_wifi();
+  client.setServer(mqtt_server, 1883);
+
+  // client.setCallback(callback);
+  digitalWrite(LED_BUILTIN, HIGH);
+}
+
+void loop()
+{
+  int val_digital = digitalRead(sound_digital);
+  int val_analog = analogRead(sound_analog);
+  range = val_analog - treshold;
+
+  range = abs(range);
+  ledLevel = map(val_analog, treshold, 600, 0, ledCount);
+  ledLevel = abs(ledLevel);
+
+  // kirim data suara normal tiap periode waktu tertentu(sesuai nilai periodeNormal)
+  currentTime = millis();
+  if (currentTime - startTime >= periodeNormal)
+  {
+    // debug
+    debugMode(val_analog, treshold, range, ledLevel, ledCount);
+    snprintf(msg, MSG_BUFFER_SIZE, "%d", ledLevel);
+    client.publish("sensor/suara", msg);   
+    //kirim status jenis suara real time
+    
+    if(hening){
+      snprintf(status_msg, 8, "%d", 0);
+      client.publish("status/suara", status_msg);
+      hening = 0;  
+    }
+    
+    startTime = currentTime;  
+  }
+  delay(10);
+  
+  // trigering
+  if (range > 10)
+  {
+    time_high = millis();
+    playing_time = millis();
+    sound_dig = 600;
+    playing = 1;
+    gel = 1;
+    sinyalLow = 0;
+    sinyalHigh = 1;
+    if (sinyalHigh)
+    {
+      startHigh = millis();
+      Serial.println("send status suara");
+      snprintf(status_msg, 8, "%d", 1);
+      client.publish("status/suara", status_msg);
+      sinyalHigh = 0;
+    }
+
+    while (playing)
+    {
+      val_digital = digitalRead(sound_digital);
+      val_analog = analogRead(sound_analog);
+      range = val_analog - treshold;
+      // prev_val = val_analog;
+      range = abs(range);
+      ledLevel = map(val_analog, treshold, 600, 0, ledCount);
+      ledLevel = abs(ledLevel);
+
+      if (range > 10)
+      {
+        time_high = millis();
+        playing_time = millis();
+        sound_dig = 600;
+        gel = 1;
+        sinyalLow = 0;
+        if (sinyalHigh)
+        {
+          startHigh = millis();
+          Serial.print("sinyal high2 : ");
+          Serial.println(startHigh);
+          sinyalHigh = 0;
+        }
+      }
+      /*
+      currentTime = millis();
+      if (currentTime - startTime >= periodePlaying)
+      {
+        debugMode(val_analog, treshold, range, ledLevel, ledCount);
+        snprintf(msg, MSG_BUFFER_SIZE, "%d", ledLevel);
+        client.publish("sensor/suara", msg);
+        startTime = currentTime;  
+      }
+      
+      
+      snprintf(msg, MSG_BUFFER_SIZE, "%d", ledLevel);
+      client.publish("sensor/suara", msg);
+      delay(10);*/
+      delay(100);
+      if (val_digital == LOW)
+      {
+        time_low = millis();
+        if (!sinyalLow)
+        {
+          startLow = millis();
+          sinyalLow = 1;
+        }
+        rangeLow = time_low - startLow;
+        waktuselisih = time_low - time_high;
+        playingdelay = time_low - playing_time;
+
+        if (rangeLow > 100)
+        {
+          sound_dig = 500;
+          if (gel != prev_gel)
+          {
+            changeLow = millis();
+            Serial.print("change low : ");
+            Serial.print(changeLow);
+            rangeHigh = changeLow - startHigh;
+            hitungGelombang += 1;
+            // prev_gel = gel;
+            Serial.print("Gelombang Ke-");
+            Serial.println(hitungGelombang);
+            Serial.print("panjang gelombang = ");
+            Serial.println(rangeHigh);
+            sinyalHigh = 1;
+          }
+
+          gel = 0;
+        }
+        if (playingdelay > 3000)
+        {
+          playing = 0;
+          Serial.println("Jumlah Gelombang = ");
+          Serial.println(hitungGelombang);
+          // percobaan kirim json
+          if (hitungGelombang > 10)
+          {
+            suara = "Tangisan Bayi";
+          }
+          else
+          {
+            suara = "Bukan Tangisan Bayi";
+          }
+          sendJsonData(suara, hitungGelombang);
+          hitungGelombang = 0;
+          hening=1;
+        }
+      }
+    }
+  }
+
+  //============================================================
+  // tes fungsi sendJsonData
+
+  /*
+  String suara = "Tangis Bayi";
+  int duration = 29;
+
+  sendJsonData(suara, duration);
+  delay(3000);*/
+  //============================================================
+
+  //============================================================
+  // kodingan lama 1
+
+  /*
+  //int sensor_reading = analogRead(sound_analog);
+  //ledLevel = map(sensor_reading, 540, 700, 0, ledCount);
+  //Serial.println(ledLevel);
+
+  //for (int i = 0; i < ledCount; i++) {
+    // if the array element's index is less than ledLevel,
+    // turn the pin for this element on:
+    //if (i < ledLevel) {
+    //  client.publish("codersid/nodemcu/v1", i);
+
+    //}
+    // turn off all pins higher than the ledLevel:
+    //else {
+    //  digitalWrite(ledPin[i], LOW);
+    //}
+  }*/
+  //============================================================
+
+  //============================================================
+  // codingan lama 2
+  /*
+
+  int sensor_reading = analogRead(sound_analog);
+  int rangeSensor = sensor_reading - prev_sensor_reading;
+  rangeSensor = abs(rangeSensor);
+  ledLevel = map(sensor_reading, 553, 600, 0, ledCount);
+  ledLevel = abs(ledLevel);
+
+  Serial.print(prev_sensor_reading);
+  Serial.print("  |  ");
+  prev_sensor_reading = sensor_reading;
+  Serial.print(sensor_reading);
+  Serial.print("  |  ");
+  Serial.print(ledLevel);
+  Serial.print("  |  ");
+  Serial.println(rangeSensor);
+  Serial.print(waiting);
+  delay(10);
+
+  // over treshold
+  if (rangeSensor > 10)
+  {
+    cancelStart = millis();
+    if (!waiting)
+    {
+      waiting = 1;
+      digitalWrite(LED_BUILTIN, LOW); // aktiv low
+      waitStart = millis();
+    }
+  }
+
+  if (waiting)
+  {
+    snprintf(msg, MSG_BUFFER_SIZE, "%ld", ledLevel);
+    client.publish("sensor/suara", msg);
+    Serial.print("send sensor suara to broker");
+    cancelDuration = millis() - cancelStart;
+    waitDuration = millis() - waitStart;
+    if (cancelDuration > cancelTime)
+    {
+      Serial.println("Cancel Time");
+      waiting = 0;
+      digitalWrite(LED_BUILTIN, HIGH);
+      ledLevel = 0;
+    }
+    else if (waitDuration > waitTime)
+    {
+      // snprintf(msg, MSG_BUFFER_SIZE, "%ld", ledLevel);
+      Serial.println("Suara Bayi terdeteksi");
+      playStart = millis();
+      playing = 1;
+
+      while (playing)
+      {
+        playDuration = millis() - playStart;
+        Serial.println("Suara Bayi terdeteksi1");
+        if (playDuration < playTime)
+        {
+          Serial.println("Suara Bayi terdeteksi2");
+          client.publish("sensor/suara", "Bayi Menangis");
+          Serial.println("Bayi Menangis");
+          digitalWrite(led, HIGH);
+          delay(200);
+          digitalWrite(led, LOW);
+          delay(200);
+        }
+        else
+        {
+          playing = 0;
+          ledLevel = 0;
+        }
+      }
+    }
+  }
+  */
+  //============================================================>
+
+  //==============================================<
+  // Reconnect MQTT
+  if (!client.connected())
+  {
+    connectMQTT();
+  }
+  client.loop();
+  //==============================================>
+
+  //==========================================================<
+  // tes publish
+  /*
+  snprintf(msg, MSG_BUFFER_SIZE, "%d", 100);
+  client.publish("sensor/suara", msg);
+  Serial.println(msg);
+  delay(1000);*/
+  //============================================================>
+
+  //============================================================<
+  // codingan lama 1
+  /*unsigned long now = millis();
+  if (now - lastMsg > 2000)
+  {
+    lastMsg = now;
+    ++value;
+    //https://www.geeksforgeeks.org/snprintf-c-library/
+    snprintf(msg, MSG_BUFFER_SIZE, "hello world #%ld", value);
+    Serial.print("Publish message: ");
+    Serial.println(msg);
+    client.publish("codersid/nodemcu/v1", msg);
+
+  //  Serial.print(val_analog);
+  //  Serial.print("\t");
+  //  Serial.println(val_digital);tes
+  }*/
+  //===========================================================>
 }
