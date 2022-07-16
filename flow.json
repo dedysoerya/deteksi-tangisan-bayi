@@ -397,6 +397,7 @@
         "id": "fe3c01da20ce078a",
         "type": "inject",
         "z": "3988ba92a36baeae",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -426,7 +427,7 @@
         "id": "0901a8cf5c8b4341",
         "type": "mqtt in",
         "z": "3988ba92a36baeae",
-        "name": "Suara Bayi",
+        "name": "Sensor Suara",
         "topic": "sensor/suara",
         "qos": "2",
         "datatype": "auto",
@@ -435,7 +436,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 240,
+        "x": 250,
         "y": 260,
         "wires": [
             [
@@ -444,7 +445,8 @@
                 "624a7d59ec676422",
                 "b99c19105d00146d",
                 "504b769f6a5b1b16",
-                "c49267aaa2063870"
+                "c49267aaa2063870",
+                "ca8093eecf7964df"
             ]
         ]
     },
@@ -508,8 +510,8 @@
         "interpolate": "linear",
         "nodata": "",
         "dot": false,
-        "ymin": "",
-        "ymax": "",
+        "ymin": "0",
+        "ymax": "100",
         "removeOlder": "30",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -932,7 +934,7 @@
         "type": "switch",
         "z": "3988ba92a36baeae",
         "name": "Burner on/off",
-        "property": "payload.burnerInfo",
+        "property": "payload",
         "propertyType": "msg",
         "rules": [
             {
@@ -975,6 +977,7 @@
         "id": "f386926a2e39711e",
         "type": "inject",
         "z": "3988ba92a36baeae",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -1000,6 +1003,7 @@
         "id": "9129103771f7c8bd",
         "type": "inject",
         "z": "3988ba92a36baeae",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -1008,9 +1012,9 @@
                 "vt": "str"
             }
         ],
-        "repeat": "10",
+        "repeat": "",
         "crontab": "",
-        "once": false,
+        "once": true,
         "onceDelay": 0.1,
         "topic": "",
         "x": 90,
@@ -1025,6 +1029,7 @@
         "id": "3367ec01e611cc22",
         "type": "inject",
         "z": "3988ba92a36baeae",
+        "d": true,
         "name": "",
         "props": [
             {
@@ -1055,13 +1060,13 @@
         "type": "file in",
         "z": "3988ba92a36baeae",
         "name": "",
-        "filename": "C:\\Users\\Administrator\\Pictures\\img\\smile.jpg",
+        "filename": "C:\\Users\\Administrator\\Pictures\\img\\speaker.png",
         "format": "",
         "chunk": false,
         "sendError": false,
         "encoding": "none",
         "allProps": false,
-        "x": 440,
+        "x": 450,
         "y": 860,
         "wires": [
             [
@@ -1201,7 +1206,7 @@
         "type": "debug",
         "z": "3988ba92a36baeae",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -1510,9 +1515,7 @@
         "x": 550,
         "y": 160,
         "wires": [
-            [
-                "ca8093eecf7964df"
-            ]
+            []
         ]
     },
     {
@@ -1593,6 +1596,44 @@
                 "8004ca7ae42c4519"
             ]
         ]
+    },
+    {
+        "id": "6d5ecb9f4a744974",
+        "type": "mqtt in",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "topic": "status/suara",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "6965d65c2ee6deef",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 90,
+        "y": 840,
+        "wires": [
+            [
+                "3e4c3cd7030a8fe7",
+                "c3b3ce3f472326c5"
+            ]
+        ]
+    },
+    {
+        "id": "c3b3ce3f472326c5",
+        "type": "debug",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 250,
+        "y": 940,
+        "wires": []
     },
     {
         "id": "1bf1c4dc04d001f1",
