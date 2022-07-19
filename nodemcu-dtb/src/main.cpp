@@ -7,25 +7,25 @@
 
 // const char *ssid = "KS 24 BLIMBING OUTDOOR";
 // const char *password = "pancongnyamantap";
-// const char *ssid = "such a person";
-// const char *password = "zidanedane";
-const char *ssid = "Mavens 2G";
-const char *password = "adminmavens";
+const char *ssid = "such a person";
+const char *password = "zidanedane";
+// const char *ssid = "Mavens 2G";
+// const char *password = "adminmavens";
 const char *mqtt_server = "118.98.64.212";
 const char *userBroker = "admin";
 const char *passBroker = "adminmavens";
 
 //=====================================
-//Parameter Menangis
-const int cryingRate = 560;
-const int cryCountRate = 3;
+// Parameter Menangis
+const int cryingRate = 665;
+const int cryCountRate = 5;
 const int cryErorToleransi = 10;
 //======================================
 
 const int led = 13;
 const int sound_digital = 4;
 const int sound_analog = A0;
-const int treshold = 566;
+const int treshold = 581;
 const int th2 = 10;
 const int th_atas = 600;
 const int th_bawah = 500;
@@ -48,20 +48,21 @@ boolean sinyalHigh; // kondisi mendeteksi suara
 boolean gel = 0;
 boolean prev_gel = 0;
 boolean hening = 1; // kondisi tidak ada suara
+boolean analisis = 0;
 
 // const int num_measure = 128;
 int sound_dig = 500;
 
 int range = 0;
-int analisis = 0;
 int analising = 0;
 int hitungGelHigh, hitungGelLow;
 int rangeHighint_prev, erorToleransi;
 int selisihrentang = 0;
+int countTB, countBTB;
 
 int kelas[50];
 int dataHigh[50];
-int dataBaru [25];
+int dataBaru[25];
 
 String suara;
 
@@ -69,12 +70,12 @@ unsigned long panjangGelombang = 0;
 long g1, g2, g3, g4, g5, g6, g7, g8, g9, g10, g11, g12, g13, g14, g15, g16, g17, g18, g19, g20;
 
 const long periodeAnalisis = 10000;
-const long periodeNormal = 1500;
+const long periodeNormal = 2000;
 const long periodePlaying = 500;
 
-//const long waitTime = 10000.0; // how long after trigger to wait before playing music
-// const long cancelTime = 4000.0; // during wait, how long of a lull will cancel wait
-//const long playTime = 3000.0;
+// const long waitTime = 10000.0; // how long after trigger to wait before playing music
+//  const long cancelTime = 4000.0; // during wait, how long of a lull will cancel wait
+// const long playTime = 3000.0;
 
 boolean waiting = 0;
 boolean playing = 0;
@@ -158,13 +159,16 @@ void connectMQTT()
 
 //============================================================<
 // fungsi kirim data format json
-void sendJsonData(String jenisSuara, int durasi)
+void sendJsonData(String jenisSuara, int wave, int rate, int tb, int btb)
 {
   StaticJsonBuffer<300> JSONbuffer;
   JsonObject &JSONencoder = JSONbuffer.createObject();
 
   JSONencoder["jenisSuara"] = jenisSuara;
-  JSONencoder["durasi"] = durasi;
+  JSONencoder["wave"] = wave;
+  JSONencoder["rate"] = rate;
+  JSONencoder["tb"] = tb;
+  JSONencoder["btb"] = btb;
 
   char JSONmessageBuffer[100];
   JSONencoder.printTo(JSONmessageBuffer, sizeof(JSONmessageBuffer));
@@ -309,7 +313,6 @@ void loop()
       snprintf(status_msg, 8, "%d", 1);
       client.publish("status/suara", status_msg);
       sinyalHigh = 0;
-
     }
 
     while (playing)
@@ -363,42 +366,50 @@ void loop()
         client.publish("sensor/sinyal", msg);
         startTime2 = currentTime;
       }
-      
+
       currentTime3 = millis();
       if (currentTime3 - startTime3 >= periodeAnalisis)
       {
-          int countMax = kelas[0];
-          int indexMax = 0;
-          for (int l = 0; l <= (hitungGelHigh - 1); l++)
+        int countMax = kelas[0];
+        int indexMax = 0;
+        analisis = 1;
+        for (int l = 0; l <= (hitungGelHigh - 1); l++)
+        {
+          if (kelas[l] > countMax)
           {
-            if(kelas[l] > countMax ){
-              countMax = kelas[l];
-              indexMax = l;
-            }
+            countMax = kelas[l];
+            indexMax = l;
           }
-          Serial.print(indexMax);
-          Serial.print(" || ");
-          Serial.print(countMax);
-          Serial.print(" || ");
-          Serial.println(dataHigh[indexMax]);
-          
-          int nilaiToleransi = cryErorToleransi*cryingRate/100;
-          if (countMax > cryCountRate && dataHigh[indexMax] > (cryingRate-nilaiToleransi) && dataHigh[indexMax] < (cryingRate+nilaiToleransi)){
-            snprintf(status_msg, MSG_BUFFER_SIZE, "%d", 2);
-            client.publish("status/suara", status_msg);
-            Serial.println("Kirim Status Nangis");
-          }
-          
-          
-        
+        }
+        Serial.print(indexMax);
+        Serial.print(" || ");
+        Serial.print(countMax);
+        Serial.print(" || ");
+        Serial.println(dataHigh[indexMax]);
+
+        int nilaiToleransi = cryErorToleransi * cryingRate / 100;
+        if (countMax > cryCountRate && dataHigh[indexMax] > (cryingRate - nilaiToleransi) && dataHigh[indexMax] < (cryingRate + nilaiToleransi))
+        {
+          snprintf(status_msg, MSG_BUFFER_SIZE, "%d", 2);
+          client.publish("status/suara", status_msg);
+          Serial.println("Kirim Status Nangis");
+          suara = "Tangisan Bayi";
+          countTB +=1;
+        }
+        else
+        {
+          suara = "Bukan Tangisan Bayi";
+          countBTB +=1;
+        }
+
         // debugPlotter(val_analog, sound_dig,th_bawah);
-        //debugMode(val_analog, treshold, th_bawah, range, ledLevel);
-        //snprintf(msg, MSG_BUFFER_SIZE, "%d", ledLevel);
-        //client.publish("sensor/sinyal", msg);
-        //Serial.println("debug periode analisis");
+        // debugMode(val_analog, treshold, th_bawah, range, ledLevel);
+        // snprintf(msg, MSG_BUFFER_SIZE, "%d", ledLevel);
+        // client.publish("sensor/sinyal", msg);
+        // Serial.println("debug periode analisis");
         startTime3 = currentTime;
       }
-      
+
       // debugPlotter(val_analog, sound_dig,th_bawah);
 
       // snprintf(msg, MSG_BUFFER_SIZE, "%d", ledLevel);
@@ -445,8 +456,7 @@ void loop()
               if (rangeHighint >= (dataHigh[i] - erorToleransi) && rangeHighint <= (dataHigh[i] + erorToleransi))
               {
                 kelas[i] += 1;
-                
-                
+
                 // Serial.println(erorToleransi);
                 // Serial.println(dataHigh[i]);
                 // Serial.println (keinlas[i]) ;
@@ -475,13 +485,13 @@ void loop()
           // Serial.println("Jumlah Gelombang = ");
           // Serial.println(hitungGelHigh);
           // Serial.println(kelas[]);
-          //  percobaan kirim json
-          
+
           int countMax = kelas[0];
           int indexMax = 0;
           for (int l = 0; l <= (hitungGelHigh - 1); l++)
           {
-            if(kelas[l] > countMax ){
+            if (kelas[l] > countMax)
+            {
               countMax = kelas[l];
               indexMax = l;
             }
@@ -491,9 +501,17 @@ void loop()
           Serial.print(countMax);
           Serial.print(" || ");
           Serial.println(dataHigh[indexMax]);
-          
-          
-          
+
+          //=================================<
+          //Kirim Data json
+          if (!analisis)
+          {
+            suara = "Bukan Tangisan Bayi";
+            countBTB += 1;
+          }
+          sendJsonData(suara, countMax, dataHigh[indexMax], countTB, countBTB);
+          //==================================>
+
           for (int j = 0; j <= (hitungGelHigh - 1); j++)
           {
             Serial.print(dataHigh[j]);
@@ -510,8 +528,7 @@ void loop()
           }
           Serial.println();
 
-          
-
+          /*//  percobaan kirim json
           if (hitungGelHigh > 10)
           {
             suara = "Tangisan Bayi";
@@ -519,8 +536,8 @@ void loop()
           else
           {
             suara = "Bukan Tangisan Bayi";
-          }
-          sendJsonData(suara, hitungGelHigh);
+          }*/
+          
           hitungGelHigh = 0;
           hitungGelLow = 0;
 
