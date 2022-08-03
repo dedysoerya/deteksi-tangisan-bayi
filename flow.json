@@ -314,8 +314,8 @@
         "complete": "false",
         "statusVal": "",
         "statusType": "auto",
-        "x": 310,
-        "y": 600,
+        "x": 350,
+        "y": 520,
         "wires": []
     },
     {
@@ -340,8 +340,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 150,
-        "y": 1100,
+        "x": 130,
+        "y": 920,
         "wires": [
             [
                 "3ddfd0067b975768"
@@ -352,8 +352,8 @@
         "id": "0901a8cf5c8b4341",
         "type": "mqtt in",
         "z": "3988ba92a36baeae",
-        "name": "Sensor Suara",
-        "topic": "sensor/suara",
+        "name": "",
+        "topic": "sensor/sinyal",
         "qos": "2",
         "datatype": "auto",
         "broker": "6965d65c2ee6deef",
@@ -366,11 +366,13 @@
         "wires": [
             [
                 "8ddf73e99e41581e",
-                "4b2c7189b53b3e7a",
                 "624a7d59ec676422",
                 "b99c19105d00146d",
                 "504b769f6a5b1b16",
-                "c49267aaa2063870"
+                "c49267aaa2063870",
+                "875a1516fb362bf9",
+                "4b2c7189b53b3e7a",
+                "55411f1212602ade"
             ]
         ]
     },
@@ -404,8 +406,8 @@
         "title": "Intensitas Suara",
         "label": "dB",
         "format": "{{value}}",
-        "min": 0,
-        "max": "100",
+        "min": "10",
+        "max": "120",
         "colors": [
             "#00b500",
             "#e6e600",
@@ -414,7 +416,7 @@
         "seg1": "40",
         "seg2": "85",
         "className": "",
-        "x": 660,
+        "x": 880,
         "y": 360,
         "wires": []
     },
@@ -435,7 +437,7 @@
         "nodata": "",
         "dot": false,
         "ymin": "0",
-        "ymax": "100",
+        "ymax": "120",
         "removeOlder": "30",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
@@ -456,8 +458,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 650,
-        "y": 440,
+        "x": 870,
+        "y": 400,
         "wires": [
             []
         ]
@@ -500,8 +502,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 660,
-        "y": 600,
+        "x": 860,
+        "y": 480,
         "wires": [
             []
         ]
@@ -544,8 +546,8 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 660,
-        "y": 520,
+        "x": 860,
+        "y": 440,
         "wires": [
             []
         ]
@@ -567,8 +569,8 @@
         "onstart": false,
         "scope": "local",
         "tooltip": "",
-        "x": 530,
-        "y": 920,
+        "x": 510,
+        "y": 740,
         "wires": [
             []
         ]
@@ -590,8 +592,8 @@
         "onstart": false,
         "scope": "local",
         "tooltip": "",
-        "x": 530,
-        "y": 960,
+        "x": 510,
+        "y": 780,
         "wires": [
             []
         ]
@@ -609,8 +611,8 @@
         "format": "{{msg.payload}}",
         "layout": "row-left",
         "className": "",
-        "x": 630,
-        "y": 880,
+        "x": 610,
+        "y": 700,
         "wires": []
     },
     {
@@ -623,16 +625,6 @@
         "width": 7,
         "height": 5,
         "columns": [
-            {
-                "field": "no",
-                "title": "No",
-                "width": "15%",
-                "align": "center",
-                "formatter": "rownum",
-                "formatterParams": {
-                    "target": "_blank"
-                }
-            },
             {
                 "field": "waktu",
                 "title": "Waktu",
@@ -654,9 +646,19 @@
                 }
             },
             {
-                "field": "durasi",
-                "title": "Durasi",
-                "width": "22%",
+                "field": "rate",
+                "title": "Rate",
+                "width": "20%",
+                "align": "center",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "wave",
+                "title": "Wave",
+                "width": "17%",
                 "align": "center",
                 "formatter": "plaintext",
                 "formatterParams": {
@@ -666,8 +668,8 @@
         ],
         "outputs": 0,
         "cts": false,
-        "x": 590,
-        "y": 840,
+        "x": 570,
+        "y": 660,
         "wires": []
     },
     {
@@ -684,8 +686,8 @@
         "correl": "",
         "expiry": "",
         "broker": "6965d65c2ee6deef",
-        "x": 510,
-        "y": 1100,
+        "x": 490,
+        "y": 920,
         "wires": []
     },
     {
@@ -699,8 +701,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 1100,
+        "x": 320,
+        "y": 920,
         "wires": [
             [
                 "55628ad61b1061da"
@@ -720,8 +722,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 110,
-        "y": 720,
+        "x": 130,
+        "y": 580,
         "wires": [
             [
                 "8ddf73e99e41581e",
@@ -754,8 +756,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 150,
-        "y": 1060,
+        "x": 130,
+        "y": 880,
         "wires": [
             [
                 "4d984d850ea2c142"
@@ -773,8 +775,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 1060,
+        "x": 320,
+        "y": 880,
         "wires": [
             [
                 "8b148791c6e81fe3"
@@ -795,8 +797,8 @@
         "correl": "",
         "expiry": "",
         "broker": "6965d65c2ee6deef",
-        "x": 510,
-        "y": 1040,
+        "x": 490,
+        "y": 860,
         "wires": []
     },
     {
@@ -1028,7 +1030,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "Tidak ada suara",
+                "to": "Tidak ada Suara",
                 "tot": "str"
             }
         ],
@@ -1055,7 +1057,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "Terdeteksi suara bayi",
+                "to": "Terdeteksi ada Suara",
                 "tot": "str"
             }
         ],
@@ -1082,7 +1084,7 @@
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "Terdeteksi suara bayi menangis",
+                "to": "Terdeteksi Tangisan Bayi",
                 "tot": "str"
             }
         ],
@@ -1147,8 +1149,8 @@
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 140,
-        "y": 840,
+        "x": 120,
+        "y": 660,
         "wires": [
             [
                 "643cb60961cd1227"
@@ -1160,14 +1162,14 @@
         "type": "function",
         "z": "3988ba92a36baeae",
         "name": "",
-        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     \"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.timestamp).toLocaleString(),\n     \"class\"    : msg.class,\n     \"durasi\"   : msg.durasi\n     //\"class\"    : msg.payload.jenisSuara,\n     //\"durasi\"   : msg.payload.durasi\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
+        "func": "tableData = flow.get(\"savedData\") || [];\n\ntableData.unshift(\n    {\n     //\"no\"       : \"1\",\n     \"waktu\"    : new Date(msg.timestamp).toLocaleString(),\n     \"class\"    : msg.class,\n     \"rate\"     : msg.rate,\n     \"wave\"     : msg.wave,\n     //\"class\"    : msg.payload.jenisSuara,\n     //\"durasi\"   : msg.payload.durasi\n    });\n\nif (tableData.length>15) tableData.pop();\n\nmsg.payload = tableData;\nflow.set(\"savedData\", tableData);\n\nreturn msg;",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 340,
-        "y": 860,
+        "x": 320,
+        "y": 680,
         "wires": [
             [
                 "0de7035c0dbdeef3"
@@ -1381,8 +1383,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 660,
-        "y": 680,
+        "x": 880,
+        "y": 520,
         "wires": [
             []
         ]
@@ -1395,8 +1397,8 @@
         "property": "payload",
         "action": "",
         "pretty": false,
-        "x": 310,
-        "y": 540,
+        "x": 330,
+        "y": 480,
         "wires": [
             []
         ]
@@ -1409,10 +1411,10 @@
         "rules": [
             {
                 "t": "set",
-                "p": "durasi",
+                "p": "timestamp",
                 "pt": "msg",
-                "to": "payload.durasi",
-                "tot": "jsonata"
+                "to": "",
+                "tot": "date"
             },
             {
                 "t": "set",
@@ -1423,10 +1425,17 @@
             },
             {
                 "t": "set",
-                "p": "timestamp",
+                "p": "rate",
                 "pt": "msg",
-                "to": "",
-                "tot": "date"
+                "to": "payload.rate",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "wave",
+                "pt": "msg",
+                "to": "payload.wave",
+                "tot": "jsonata"
             }
         ],
         "action": "",
@@ -1434,8 +1443,8 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 350,
-        "y": 920,
+        "x": 330,
+        "y": 740,
         "wires": [
             [
                 "643cb60961cd1227"
@@ -1455,8 +1464,8 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 130,
-        "y": 900,
+        "x": 110,
+        "y": 720,
         "wires": [
             [
                 "00fa8510a06ba6af"
@@ -1471,8 +1480,8 @@
         "property": "payload",
         "action": "",
         "pretty": false,
-        "x": 130,
-        "y": 980,
+        "x": 110,
+        "y": 800,
         "wires": [
             [
                 "8004ca7ae42c4519"
@@ -1516,6 +1525,84 @@
         "x": 290,
         "y": 260,
         "wires": []
+    },
+    {
+        "id": "c69b378ee4b34e21",
+        "type": "mqtt in",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "topic": "sensor/sinyal2",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "6965d65c2ee6deef",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 130,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "875a1516fb362bf9",
+        "type": "function",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "func": "var msg = {};\nvar msg2= {};\n\nmsg.payload = msg.payload;\nmsg.topic = 'Sinyal 1';\n\nmsg2.payload = 500;\nmsg2.topic = 'Sinyal 2';\n\nreturn [msg,msg2];",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "55411f1212602ade",
+        "type": "debug",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 610,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "f12345c25bb844c7",
+        "type": "change",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "sinyal",
+                "pt": "msg",
+                "to": "payload",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 400,
+        "y": 320,
+        "wires": [
+            []
+        ]
     },
     {
         "id": "1bf1c4dc04d001f1",
