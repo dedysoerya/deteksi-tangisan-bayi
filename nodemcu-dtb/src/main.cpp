@@ -9,8 +9,14 @@
 // const char *password = "pancongnyamantap";
 const char *ssid = "such a person";
 const char *password = "zidanedane";
+// const char *ssid = "Kombukei";
+// const char *password = "cobamisoa";
 // const char *ssid = "Mavens 2G";
 // const char *password = "adminmavens";
+
+// const char *ssid = "OPPO A37f";
+// const char *password = "aminatus16";
+
 const char *mqtt_server = "118.98.64.212";
 const char *userBroker = "admin";
 const char *passBroker = "adminmavens";
@@ -25,7 +31,7 @@ const int cryErorToleransi = 10;
 const int led = 13;
 const int sound_digital = 4;
 const int sound_analog = A0;
-const int treshold = 581;
+const int treshold = 574;
 const int th2 = 10;
 const int th_atas = 600;
 const int th_bawah = 500;
@@ -283,7 +289,7 @@ void loop()
     hening = 1;
     if (hening)
     {
-      snprintf(status_msg, 8, "%d", 0);
+      snprintf(status_msg, 8, "%d", 0); // 0 adalah status code kondisi hening
       client.publish("status/suara", status_msg);
       hening = 0;
     }
@@ -310,7 +316,7 @@ void loop()
       startTime2 = millis();
       startTime3 = millis();
       // Serial.println("Kirim status ada suara ke broker ");
-      snprintf(status_msg, 8, "%d", 1);
+      snprintf(status_msg, 8, "%d", 1); // 1 adalah status code ada suara
       client.publish("status/suara", status_msg);
       sinyalHigh = 0;
     }
@@ -331,7 +337,7 @@ void loop()
         time_high = millis();
         playing_time = millis();
         sound_dig = th_atas;
-        gel = 1; // untuk mengetahui kondis high low seperti tombol menghindari dbounce
+        gel = 1; // untuk mengetahui kondisi high low seperti tombol menghindari dbounce
 
         if (sinyalHigh)
         {
@@ -394,12 +400,14 @@ void loop()
           client.publish("status/suara", status_msg);
           Serial.println("Kirim Status Nangis");
           suara = "Tangisan Bayi";
-          countTB +=1;
+          countTB += 1;
+          sendJsonData(suara, countMax, dataHigh[indexMax], countTB, countBTB);
         }
         else
         {
           suara = "Bukan Tangisan Bayi";
-          countBTB +=1;
+          countBTB += 1;
+          sendJsonData(suara, countMax, dataHigh[indexMax], countTB, countBTB);
         }
 
         // debugPlotter(val_analog, sound_dig,th_bawah);
@@ -503,14 +511,22 @@ void loop()
           Serial.println(dataHigh[indexMax]);
 
           //=================================<
-          //Kirim Data json
+          // Kirim Data json
+          /*
           if (!analisis)
           {
             suara = "Bukan Tangisan Bayi";
-            countBTB += 1;
+            // countBTB += 1;
           }
-          sendJsonData(suara, countMax, dataHigh[indexMax], countTB, countBTB);
+          sendJsonData(suara, countMax, dataHigh[indexMax], countTB, countBTB);*/
           //==================================>
+
+          Serial.print("Kelas nilai tertinggi : ");
+          Serial.println(dataHigh[indexMax]);
+          Serial.print("Kelas tertinggi berada di index ke-");
+          Serial.println(indexMax);
+          Serial.print("dengan jumlah anggota sebanyak ");
+          Serial.println(countMax);
 
           for (int j = 0; j <= (hitungGelHigh - 1); j++)
           {
@@ -537,11 +553,12 @@ void loop()
           {
             suara = "Bukan Tangisan Bayi";
           }*/
-          
+
           hitungGelHigh = 0;
           hitungGelLow = 0;
 
           hening = 1;
+          analisis = 0;
         }
       }
     }
