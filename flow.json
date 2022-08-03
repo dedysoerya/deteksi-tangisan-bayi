@@ -209,7 +209,7 @@
     {
         "id": "c1d02905e5d2988f",
         "type": "ui_group",
-        "name": "Data Statistik",
+        "name": "Data Real Time",
         "tab": "34457c1693509977",
         "order": 2,
         "disp": true,
@@ -367,7 +367,6 @@
             [
                 "8ddf73e99e41581e",
                 "624a7d59ec676422",
-                "b99c19105d00146d",
                 "504b769f6a5b1b16",
                 "c49267aaa2063870",
                 "875a1516fb362bf9",
@@ -426,9 +425,9 @@
         "z": "3988ba92a36baeae",
         "name": "Line Chart",
         "group": "c1d02905e5d2988f",
-        "order": 2,
+        "order": 1,
         "width": 7,
-        "height": 5,
+        "height": 10,
         "label": "Grafik Suara",
         "chartType": "line",
         "legend": "false",
@@ -438,7 +437,7 @@
         "dot": false,
         "ymin": "0",
         "ymax": "120",
-        "removeOlder": "30",
+        "removeOlder": "120",
         "removeOlderPoints": "",
         "removeOlderUnit": "1",
         "cutout": 0,
@@ -469,7 +468,7 @@
         "type": "ui_chart",
         "z": "3988ba92a36baeae",
         "name": "Bar Chart",
-        "group": "c1d02905e5d2988f",
+        "group": "ed069df46de151b2",
         "order": 1,
         "width": 7,
         "height": 5,
@@ -481,7 +480,7 @@
         "nodata": "tes bar",
         "dot": false,
         "ymin": "0",
-        "ymax": "100",
+        "ymax": "10",
         "removeOlder": 1,
         "removeOlderPoints": "",
         "removeOlderUnit": "3600",
@@ -727,8 +726,6 @@
         "wires": [
             [
                 "8ddf73e99e41581e",
-                "8743237ccaa2a69a",
-                "b99c19105d00146d",
                 "a798c15f7a12763f",
                 "c49267aaa2063870"
             ]
@@ -1123,9 +1120,7 @@
         "x": 350,
         "y": 440,
         "wires": [
-            [
-                "8743237ccaa2a69a"
-            ]
+            []
         ]
     },
     {
@@ -1150,7 +1145,7 @@
         "payload": "",
         "payloadType": "date",
         "x": 120,
-        "y": 660,
+        "y": 680,
         "wires": [
             [
                 "643cb60961cd1227"
@@ -1168,8 +1163,8 @@
         "initialize": "",
         "finalize": "",
         "libs": [],
-        "x": 320,
-        "y": 680,
+        "x": 360,
+        "y": 700,
         "wires": [
             [
                 "0de7035c0dbdeef3"
@@ -1484,7 +1479,8 @@
         "y": 800,
         "wires": [
             [
-                "8004ca7ae42c4519"
+                "8004ca7ae42c4519",
+                "9f559490aa601bad"
             ]
         ]
     },
@@ -1515,7 +1511,7 @@
         "type": "debug",
         "z": "3988ba92a36baeae",
         "name": "",
-        "active": true,
+        "active": false,
         "tosidebar": true,
         "console": false,
         "tostatus": false,
@@ -1602,6 +1598,206 @@
         "y": 320,
         "wires": [
             []
+        ]
+    },
+    {
+        "id": "9f559490aa601bad",
+        "type": "change",
+        "z": "3988ba92a36baeae",
+        "name": "parsingJson",
+        "rules": [
+            {
+                "t": "set",
+                "p": "tb",
+                "pt": "msg",
+                "to": "payload.tb",
+                "tot": "jsonata"
+            },
+            {
+                "t": "set",
+                "p": "btb",
+                "pt": "msg",
+                "to": "payload.btb",
+                "tot": "jsonata"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 600,
+        "wires": [
+            [
+                "b29c7779a0996815"
+            ]
+        ]
+    },
+    {
+        "id": "82865e0f038baa33",
+        "type": "debug",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 670,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "b29c7779a0996815",
+        "type": "function",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "func": "var msg1 = {};\nvar msg2= {};\n\nmsg1.payload = msg.tb;\nmsg1.topic = 'Tangisan Bayi';\n\nmsg2.payload = msg.btb;\nmsg2.topic = 'Bukan Tangisan Bayi';\n\nreturn [msg1,msg2];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 580,
+        "wires": [
+            [
+                "82865e0f038baa33",
+                "b99c19105d00146d"
+            ],
+            [
+                "b99c19105d00146d"
+            ]
+        ]
+    },
+    {
+        "id": "7c880f5aca5f51e3",
+        "type": "inject",
+        "z": "3988ba92a36baeae",
+        "name": "Reset Table",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 110,
+        "y": 640,
+        "wires": [
+            [
+                "ddbbf5d66449e887"
+            ]
+        ]
+    },
+    {
+        "id": "7f7bdc8efdb5f94e",
+        "type": "function",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "func": "msg.payload =[{\n    \"series\": [\"Tangisan Bayi\", \"Bukan Tangisan Bayi\"],\n    \"data\": [ [5,6,9,10], [3,8,2,5]],\n    \"labels\": [ \"Jan\", \"Feb\", \"Mar\", \"Apr\" ]\n}]\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 500,
+        "wires": [
+            [
+                "8743237ccaa2a69a"
+            ]
+        ]
+    },
+    {
+        "id": "ddbbf5d66449e887",
+        "type": "change",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "savedData",
+                "pt": "flow",
+                "to": "[]",
+                "tot": "json"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 350,
+        "y": 640,
+        "wires": [
+            [
+                "0de7035c0dbdeef3"
+            ]
+        ]
+    },
+    {
+        "id": "c2802d9cac6f14bc",
+        "type": "inject",
+        "z": "3988ba92a36baeae",
+        "name": "Reset Pie Chart",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 540,
+        "y": 420,
+        "wires": [
+            [
+                "3054a9d92f4b3ea4"
+            ]
+        ]
+    },
+    {
+        "id": "3054a9d92f4b3ea4",
+        "type": "function",
+        "z": "3988ba92a36baeae",
+        "name": "",
+        "func": "var msg1 = {};\nvar msg2= {};\n\nmsg1.payload = 0;\nmsg1.topic = 'Tangisan Bayi';\n\nmsg2.payload = 0;\nmsg2.topic = 'Bukan Tangisan Bayi';\n\nreturn [msg1,msg2];",
+        "outputs": 2,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 420,
+        "wires": [
+            [
+                "b99c19105d00146d"
+            ],
+            [
+                "b99c19105d00146d"
+            ]
         ]
     },
     {
